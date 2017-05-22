@@ -1,7 +1,4 @@
 # -*- encoding: utf-8 -*- 
-"""
-http://www.cnblogs.com/edhg/p/6889654.html
-"""
 import os
 from PIL import Image
 from PIL import ImageFile
