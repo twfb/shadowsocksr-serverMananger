@@ -3,12 +3,12 @@ import os
 from PIL import Image
 from PIL import ImageFile
 
-def equal(im1, im2): 
+def equal(img1, img2): 
     """
     if same return Ture else return False
     """
     ImageFile.LOAD_TRUNCATED_IMAGES = True
-    return im1 == im2
+    return img1 == img2
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 global path
@@ -24,7 +24,7 @@ def move():
                 if fileName[0:1]!='z':
                     os.remove(fileName)
     os.system(r'xcopy /y C:\Users\用户名\AppData\Local\Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets F:\Picture\Themes')
-                                     #windows焦点图片默认存储位置，需要将“用户名”更换为你的用户名                                                                                         #存储壁纸的文件夹
+                         #windows焦点图片默认存储位置，需要将“用户名”更换为你的用户名                                                       #存储壁纸的文件夹
     print('move successed')
 
 
