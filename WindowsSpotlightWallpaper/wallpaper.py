@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*- 
 """
 1.安装python2，开启windows聚焦
-2.选择或创建一个文件夹作为壁纸存储的地方
-3.在设置里选择壁纸存储的文件夹，并在设置中设置为幻灯片
-4.解释下 我是将喜欢的壁纸前面加'z'然后手动编号， 不喜欢的也是加‘z’不过后面加99999999999999
-5.可以将wallpaper.bat添加到计划任务中具体细节见 http://blog.csdn.net/wuzboy/article/details/51206570
+2.安装PIL库
+3.选择或创建一个文件夹作为壁纸存储的地方
+4.在设置里选择壁纸存储的文件夹，并在设置中设置为幻灯片
+5.解释下 我是将喜欢的壁纸前面加'z'然后手动编号， 不喜欢的也是加‘z’不过后面加99999999999999
+6.可以将wallpaper.bat添加到计划任务中具体细节见 http://blog.csdn.net/wuzboy/article/details/51206570
 """
 import os
 from PIL import Image
