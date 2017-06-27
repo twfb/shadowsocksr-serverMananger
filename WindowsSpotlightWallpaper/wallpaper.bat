@@ -1,3 +1,3 @@
 echo
-start pythonw wallpaper.py
+start python wallpaper.py
 exit
