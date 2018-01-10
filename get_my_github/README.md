@@ -6,5 +6,4 @@
         - `python -u dhgdhg`
         - `python -u dhgdhg -t s -o dir_name`
         - `python -u dhgdhg -t a -o dir_name`
-
-         
+#### 注意: 强烈建议不要中断下载,否则所有已下载的文件都将重新下载
