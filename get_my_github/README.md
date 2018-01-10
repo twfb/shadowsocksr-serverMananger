@@ -7,3 +7,6 @@
         - `python -u dhgdhg -t s -o dir_name`
         - `python -u dhgdhg -t a -o dir_name`
 #### 注意: 强烈建议不要中断下载,否则所有已下载的文件都将重新下载
+##### 运行时图片:
+    - ![](http://images2017.cnblogs.com/blog/1043898/201801/1043898-20180110153846097-571444189.png)
+    - ![](http://images2017.cnblogs.com/blog/1043898/201801/1043898-20180110153848347-183992530.png)
