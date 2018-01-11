@@ -112,7 +112,10 @@ def download(project_list, directory):
 
 
 def git_clone(repo_url, path):
-    pygit2.clone_repository(repo_url, path)
+    try:
+        pygit2.clone_repository(repo_url, path)
+    except pygit2.GitError as e:
+        print(e)
 
 
 def main():
