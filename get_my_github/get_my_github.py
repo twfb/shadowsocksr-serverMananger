@@ -9,6 +9,8 @@ import os
 import sys
 import platform
 
+import time
+
 
 def is_windows_system():
     return 'Windows' in platform.system()
@@ -95,6 +97,7 @@ def download(project_list, directory):
         ma = re.match(pattern, i)
         if os.path.exists(directory + '/' + i):
             del_dir(directory + '\\' + ma.group(1) + '\\' + ma.group(2))
+            time.sleep(0.1)
 
     for i in project_list:
         print('downloading ' + i[1:] + ' to ' + directory + '/')
