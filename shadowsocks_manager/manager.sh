@@ -2,29 +2,28 @@
 #coding = utf-8
 
 import urllib2
-import json
 import os
+import json
+import re
+# set allow ip in allow_ip_list, for example: allow_ip_list = ['192.168.111.1', '12.167.2.1']
+allow_ip_list = ['112.38.217.35', '223, 104.186.2']
 
 
-def get_ip():
+def get_ip(is_verbose):
     def get_ip_inform(ip):
-        apiurl = "http://ip.taobao.com/service/getIpInfo.php?ip=%s" % ip
-        content = urllib2.urlopen(apiurl).read()
-        data = json.loads(content)['data']
-        code = json.loads(content)['code']
-        if code == 0:
-            print "%s  %s%s%s \n" % (data["ip"].encode('utf-8'), data["country"].encode('utf-8'), data["region"].encode('utf-8'), data["city"].encode('utf-8'))
+        api_url = "http://ip-api.com/json/%s" % ip
+        content = urllib2.urlopen(api_url).read()
+        json_data = json.loads(content)
+        if is_verbose != 'y':
+            print '{0}{1} {2} {3}{4}'.format(ip.ljust(20), json_data['country'], json_data['regionName'], json_data['city'].ljust(20), ip in allow_ip_list)
         else:
-            print data.encode('utf-8')
-
+            print ip
+            print '\tallow: {0}'.format(ip in allow_ip_list)
+            for i, v in json_data.items():
+                print '\t{0}: {1}'.format(i, v)
+            print '\n'
     str = os.popen('netstat -anp|grep python|grep ESTABLISHED').read()
-    str_list = []
-    for i in str.split('\n'):
-        if i != '' and i != ' ':
-            i_s = [j for j in i.split(' ') if j !=
-                   '' and j != ' '][4].split(':')[-2]
-            str_list.append(i_s)
-    for i in set(str_list):
+    for i in set(set(re.findall('.+f:(.+):.*ES', str))):
         get_ip_inform(i)
 
 
@@ -49,7 +48,10 @@ def main():
         if number == 0:
             exit()
         elif number == 1:
-            get_ip()
+            if not allow_ip_list:
+                print 'recommand set allow ip in this file'
+            get_ip(
+                raw_input('show verbose information, please input y or n [n]:'))
         elif number == 2:
             print 'vi /etc/shadowsocks.json'
             print 'vi /etc/sysconfig/iptables'
