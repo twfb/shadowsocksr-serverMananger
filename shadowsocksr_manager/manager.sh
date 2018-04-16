@@ -25,26 +25,36 @@ def get_ip(is_verbose):
 
 def change_config():
     os.system('vi /etc/shadowsocks.json')
-    if raw_input('Do you change your port [N/y]') == 'y':
-        print 'please input port'
-        print 'for example:\n\t8080,8978'
-        ports_list=raw_input('your ports:').replace(' ', '').split(',')
-        for port in ports_list:
-            os.system(
-                'iptables -I INPUT -p tcp --dport {0} -j ACCEPT'.format(port))
+    if raw_input('Do you change port [N/y]') == 'y':
+        print '\nif you have removed some port, you should do that:\n\t1.remove all\n\t2.add your port'
+        print 'current open port:'
+        for i in set(re.findall('   tcp dpt:(\d+)',os.popen('iptables -L -n --line-number').read(), re.S)):
+            print i
+        print '\n'
+        a_or_r = raw_input('add(a) or remove all(r)  [a]:')
+        if a_or_r == 'a':
+            print 'please input port'
+            print 'for example:\n\t8080,8978'
+            ports_list=raw_input('your ports:').replace(' ', '').split(',')
+            for port in ports_list:
+                os.system(
+                    'iptables -I INPUT -p tcp --dport {0} -j ACCEPT'.format(port))
+        elif a_or_r == 'r':
+            os.system('service iptables restart')
     os.system('/etc/init.d/shadowsocks restart')
-    print 'change success.'
+    print 'after changed if cann't connect server, nothing better than reboot'
 
 def main():
     str='''
     please select your option
     1 show connectted ip and ip information
-    2 chang server config
+    2 change server config
     3 start server
     4 stop server
     5 restart server
     6 show server status
     0 quit
+[notice]:if you have rebootted your server, you need to input 2 and add port again
     '''
     print str
     number=0
