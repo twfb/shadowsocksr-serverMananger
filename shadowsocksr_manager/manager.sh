@@ -23,26 +23,36 @@ def get_ip(is_verbose):
     for i in set(set(re.findall('.+f:(.+):.*ES', str))):
         get_ip_inform(i)
 
+
 def change_config():
-    os.system('vi /etc/shadowsocks.json')
-    if raw_input('Do you change port [N/y]') == 'y':
-        print '\nif you have removed some port, you should do that:\n\t1.remove all\n\t2.add your port'
-        print 'current open port:'
-        for i in set(re.findall('   tcp dpt:(\d+)',os.popen('iptables -L -n --line-number').read(), re.S)):
-            print i
-        print '\n'
-        a_or_r = raw_input('add(a) or remove all(r)  [a]:')
+    def change_port():
+        show_port()
+        a_or_r = raw_input('add(a), remove(r) or quit(q)  [q]:')
         if a_or_r == 'a':
             print 'please input port'
             print 'for example:\n\t8080,8978'
             ports_list=raw_input('your ports:').replace(' ', '').split(',')
             for port in ports_list:
-                os.system(
-                    'iptables -I INPUT -p tcp --dport {0} -j ACCEPT'.format(port))
+                os.system('iptables -I INPUT -p tcp --dport {0} -j ACCEPT'.format(port))
+            os.system('/etc/init.d/shadowsocks restart')
         elif a_or_r == 'r':
-            os.system('service iptables restart')
-    os.system('/etc/init.d/shadowsocks restart')
-    print 'after changed if cann't connect server, nothing better than reboot'
+            print 'if you remove some port, I recommand you to reboot your server, and then just select add port in iptables rules again'
+
+    def show_port():
+        print '\n   current open port: ',
+        for i in set(re.findall('   tcp dpt:(\d+)',os.popen('iptables -L -n --line-number').read(), re.S)):
+            print i,
+        print '\n'
+
+    if raw_input('I just want to change port in iptables rules[N/y]:') == 'y':
+        change_port()
+
+    if raw_input('edit config file [N/y]:') == 'y':
+        os.system('vi /etc/shadowsocks.json')
+        if raw_input('you changed ports [N/y]:') == 'y':
+            change_port()
+    print 'change success.'
+    
 
 def main():
     str='''
