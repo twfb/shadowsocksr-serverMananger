@@ -7,4 +7,3 @@
 4. 部分截图 
     - ![](./example.png)
     - ![](./example01.png)
-5. ssr配置:https://www.qcgzxw.cn/1640.html/comment-page-64
