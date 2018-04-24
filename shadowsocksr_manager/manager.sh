@@ -25,24 +25,37 @@ def get_ip(is_verbose):
 
 
 def change_config():
+    current_ports = re.findall('(\d+).+?(\d+)', os.popen('iptables -L INPUT --line-numbers').read())
     def change_port():
+        print 'change iptables config file to let port open /n'
         show_port()
         a_or_r = raw_input('add(a), remove(r) or quit(q)  [q]:')
+        if a_or_r != 'a' and a_or_r != 'r':
+            return
         if a_or_r == 'a':
             print 'please input port'
             print 'for example:\n\t8080,8978'
             ports_list=raw_input('your ports:').replace(' ', '').split(',')
             for port in ports_list:
                 os.system('iptables -I INPUT -p tcp --dport {0} -j ACCEPT'.format(port))
-            os.system('/etc/init.d/shadowsocks restart')
         elif a_or_r == 'r':
-            print 'if you remove some port, I recommand you to reboot your server, and then just select add port in iptables rules again'
+            for i in current_ports:
+                print i[1]
+            ports = raw_input('please input the port that you want to remove, such as \'8009,8010\':').replace(' ', '').split(',')
+            for i in ports:
+                for v in current_ports:
+                    if i == v[1]:
+                        os.system('iptables -D INPUT {0}'.format(v[0]))
+
+        os.system('service iptables save')
+        os.system('/etc/init.d/shadowsocks restart')
+        print 'change port success'
 
     def show_port():
-        print '\n   current open port: ',
-        for i in set(re.findall('   tcp dpt:(\d+)',os.popen('iptables -L -n --line-number').read(), re.S)):
-            print i,
-        print '\n'
+        print '\n   current open port: \n',
+        for i in current_ports:
+            print '{0}. {1}'.format(i[0], i[1])
+            print '\n'
 
     if raw_input('I just want to change port in iptables rules[N/y]:') == 'y':
         change_port()
@@ -64,7 +77,6 @@ def main():
     5 restart server
     6 show server status
     0 quit
-[notice]:if you have rebootted your server, you need to input 2 and add port again
     '''
     print str
     number=0
