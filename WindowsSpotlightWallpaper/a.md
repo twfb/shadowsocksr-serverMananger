@@ -1,3 +1,11 @@
+![](http://latex.codecogs.com/gif.latex?%5Cinline%20f%28n%29%3D%20%5Cbegin%7Bcases%7D%20q%2C%20k%3D0%2C%20%5Cquad%200%3Cp%3C1%20%5C%5C%5C%5C%20p%2C%20k%3D1%2C%20%5Cquad%20q%3D1-p%20%5Cend%7Bcases%7D)
+
+
+
+
+
+
+
 $A$ </br>
 ![](http://latex.codecogs.com/gif.latex?%5Cinline%20A)
 
