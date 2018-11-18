@@ -93,10 +93,12 @@ def main():
         elif number == 2:
             change_config()
         elif number == 3:
+            os.system('service iptables restart')
             os.system('/etc/init.d/shadowsocks start')
         elif number == 4:
             os.system('/etc/init.d/shadowsocks stop')
         elif number == 5:
+            os.system('service iptables restart')
             os.system('/etc/init.d/shadowsocks restart')
         elif number == 6:
             os.system('/etc/init.d/shadowsocks status')
