@@ -1,0 +1,20 @@
+{
+    "server": "0.0.0.0",
+    "server_ipv6": "::",
+    "local_address": "127.0.0.1",
+    "local_port": 1081,
+    "timeout": 120,
+    "udp_timeout": 60,
+    "method": "chacha20",
+    "protocol": "auth_sha1_v4",
+    "protocol_param": "",
+    "obfs": "plain",
+    "obfs_param": "",
+    "dns_ipv6": false,
+    "connect_verbose_info": 1,
+    "redirect": "",
+    "fast_open": false,
+    "port_password": {
+        "YourPort": "YourPassword"
+    }
+}
