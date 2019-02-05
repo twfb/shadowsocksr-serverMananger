@@ -48,6 +48,7 @@ def change_config():
                         os.system('iptables -D INPUT {0}'.format(v[0]))
 
         os.system('service iptables save')
+        os.system('service iptables restart')
         os.system('/etc/init.d/shadowsocks restart')
         print 'change port success'
 
