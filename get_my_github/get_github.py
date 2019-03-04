@@ -104,7 +104,7 @@ def git_clone(name, path, branch_name='master'):
     data = None
     try:
         data = urllib2.urlopen(url)
-    except (urllib.error.URLError, urllib.error.URLError):
+    except (urllib.error.URLError):
         headers['Host'] = 'github.com'
         request = urllib2.Request(
             'https://github.com/{}/{}'.format(username, projectname), headers=headers)
