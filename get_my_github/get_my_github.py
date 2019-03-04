@@ -1,14 +1,14 @@
 # -*- coding:utf-8 -*-
 import urllib.request as urllib2
 import re
-import pygit2
 from optparse import OptionParser
 import threading
 import queue
 import os
 import sys
 import platform
-
+import zipfile
+import os
 import time
 
 
@@ -101,8 +101,8 @@ def download(project_list, directory):
 
     for i in project_list:
         print('downloading ' + i[1:] + ' to ' + directory + '/')
-        repo_url = 'git://github.com' + i + '.git'
-        t = threading.Thread(target=git_clone, args=(repo_url, directory + i))
+        repo_url = 'https:://github.com' + i
+        t = threading.Thread(target=git_clone, args=(i, directory + i))
         threads.append(t)
 
     print('downloading please don\'t stop it')
@@ -111,11 +111,18 @@ def download(project_list, directory):
         t.start()
 
 
-def git_clone(repo_url, path):
-    try:
-        pygit2.clone_repository(repo_url, path)
-    except pygit2.GitError as e:
-        print(e)
+def git_clone(name, path):
+    username, projectname = re.match(
+        '(.+)/(.+)', name).groups()
+    zipfile_name = projectname + '.zip'
+    url = 'https://codeload.github.com/{}/{}/zip/master'.format(
+        username, projectname)
+    data = request.urlopen(url)
+    with open(path+'/'+zipfile_name, 'wb') as f:
+        f.write(data.read())
+    with zipfile.ZipFile(zipfile_name, 'r') as sqlfile:
+        sqlfile.extractall('./{}'.format(projectname))
+    os.remove(path+'/'+zipfile_name)
 
 
 def main():
