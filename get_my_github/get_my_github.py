@@ -117,7 +117,7 @@ def git_clone(name, path):
     zipfile_name = projectname + '.zip'
     url = 'https://codeload.github.com/{}/{}/zip/master'.format(
         username, projectname)
-    data = request.urlopen(url)
+    data = urllib2.urlopen(url)
     with open(path+'/'+zipfile_name, 'wb') as f:
         f.write(data.read())
     with zipfile.ZipFile(zipfile_name, 'r') as sqlfile:
