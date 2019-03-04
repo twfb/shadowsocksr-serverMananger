@@ -1,44 +1,30 @@
-# -*- coding:utf-8 -*-
+import urllib
 import urllib.request as urllib2
 import re
-from optparse import OptionParser
 import threading
 import queue
 import os
-import sys
-import platform
 import zipfile
 import os
 import time
+from optparse import OptionParser
 
 
-def is_windows_system():
-    return 'Windows' in platform.system()
-
-
-def is_linux_system():
-    return 'Linux' in platform.system()
-
-
-def del_dir(dir_name):
-    a = input('I will delete {}? y/n [y]'.format(sys.path[0] + '\\' + dir_name))
-    if a == 'y' or a == '':
-        if is_windows_system():
-            os.popen('rd /s /q ' + dir_name)
-        else:
-            os.popen('rm -rf' + dir_name)
-    else:
-        sys.exit(0)
+headers = {
+    'User-Agent': r'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36',
+    'Connection': 'keep-alive',
+    'Accept-Encoding': 'identity',
+}
 
 
 def get_page(url_list):
-    user_agent = r'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36'
-    headers = {'User-Agent': user_agent}
     q = queue.Queue()
 
     def get_p(url):
+        headers['Host'] = 'github.com'
         request = urllib2.Request(url, headers=headers)
         response = urllib2.urlopen(request)
+        time.sleep(1)
         q.put(str(response.read()))
 
     threads = []
@@ -80,49 +66,59 @@ def get_repo(home_url, tab_num):
     for i in range(1, max_num + 1):
         url_list.append(get_url(home_url, i, tab_num))
 
-    pattern = [r'd-inline-block mb-1.*?href="(.*?)"', r'<h3>.*?href="(.*?)".*?codeRepository']
+    pattern = [
+        r'd-inline-block mb-1.*?href="(.*?)"', r'<h3>.*?href="(.*?)".*?codeRepository']
     project_list = []
-
     for i in get_page(url_list):
-        project_list += re.findall(pattern[tab_num], i)
-
+        if i:
+            project_list += re.findall(pattern[tab_num], i)
     return project_list
 
 
 def download(project_list, directory):
     threads = []
+    if not os.path.exists(directory):
+        os.mkdir(directory)
 
     for i in project_list:
-        pattern = r'/(.+)/(.+$)'
-        ma = re.match(pattern, i)
-        if os.path.exists(directory + '/' + i):
-            del_dir(directory + '\\' + ma.group(1) + '\\' + ma.group(2))
-            time.sleep(0.1)
-
-    for i in project_list:
-        print('downloading ' + i[1:] + ' to ' + directory + '/')
-        repo_url = 'https:://github.com' + i
-        t = threading.Thread(target=git_clone, args=(i, directory + i))
+        print('downloading ' + i + ' to ' + directory + '/')
+        t = threading.Thread(target=git_clone, args=(i, directory))
         threads.append(t)
 
     print('downloading please don\'t stop it')
 
     for t in threads:
+        time.sleep(2)
         t.start()
 
 
-def git_clone(name, path):
+def git_clone(name, path, branch_name='master'):
     username, projectname = re.match(
-        '(.+)/(.+)', name).groups()
-    zipfile_name = projectname + '.zip'
-    url = 'https://codeload.github.com/{}/{}/zip/master'.format(
-        username, projectname)
-    data = urllib2.urlopen(url)
-    with open(path+'/'+zipfile_name, 'wb') as f:
+        '/(.+)/(.+)', name).groups()
+
+    url = 'https://codeload.github.com/{}/{}/zip/{}'.format(
+        username, projectname, branch_name)
+    filename = path+'/'+projectname
+    zipfile_name = filename + '.zip'
+    print(url)
+    data = None
+    try:
+        data = urllib2.urlopen(url)
+    except (urllib.error.URLError, urllib.error.URLError):
+        headers['Host'] = 'github.com'
+        request = urllib2.Request(
+            'https://github.com/{}/{}'.format(username, projectname), headers=headers)
+        response = urllib2.urlopen(request)
+        pattern = '/{}/{}/tree/(.*?)/'.format(username, projectname)
+        b_name = re.findall(pattern, str(response.read()))[-1]
+        git_clone(name, path, b_name)
+    with open(zipfile_name, 'wb') as f:
         f.write(data.read())
-    with zipfile.ZipFile(zipfile_name, 'r') as sqlfile:
-        sqlfile.extractall('./{}'.format(projectname))
-    os.remove(path+'/'+zipfile_name)
+    with zipfile.ZipFile(zipfile_name, 'r') as f:
+        f.extractall(path+'.')
+
+    os.rename(filename+'-master', filename)
+    os.remove(zipfile_name)
 
 
 def main():
@@ -143,7 +139,7 @@ def main():
 
     user_name = None
     tab_num = 1
-    director = 'GitHub'
+    director = os.getcwd().replace('\\', '/')+'/GitHub'
     repo_list = []
 
     if option.user_name is None:
